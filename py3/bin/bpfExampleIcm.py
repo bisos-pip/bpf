@@ -186,6 +186,9 @@ class examples(icm.Cmnd):
 
         cmndName = "exceptionExamples" ; menuItem(verbosity='little')
 
+        cmndName = "subProcOpsExamples" ; menuItem(verbosity='little')
+
+
         return(cmndOutcome)
 
 
@@ -258,6 +261,80 @@ class exceptionExamples(icm.Cmnd):
             raise bpf.exception.TransitionError("PREV", "NEXT", "Some Message")
         except bpf.exception.TransitionError as inst:
             print(inst)
+
+        return cmndOutcome
+
+
+
+####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "subProcOpsExamples" :comment "" :parsMand "" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+"""
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  ICM-Cmnd   :: /subProcOpsExamples/ parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+"""
+class subProcOpsExamples(icm.Cmnd):
+    cmndParamsMandatory = [ ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 0, 'Max': 0,}
+
+    @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+        interactive=False,        # Can also be called non-interactively
+    ) -> icm.OpOutcome:
+        cmndOutcome = self.getOpOutcome()
+        if interactive:
+            if not self.cmndLineValidate(outcome=cmndOutcome):
+                return cmndOutcome
+
+        callParamsDict = {}
+        if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
+            return cmndOutcome
+
+####+END:
+
+        if not (resStr := bpf.subProc.Op(outcome=cmndOutcome, log=1).bash(
+                f"""echo Hello There""",
+        ).stdout):  return(icm.EH_badOutcome(cmndOutcome))
+
+        print(resStr)
+
+        if bpf.subProc.Op(outcome=cmndOutcome, log=1).bash(
+                """echo Hello Here And There""",
+        ).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
+
+        print(cmndOutcome.stdout)
+
+        if bpf.subProc.Op(outcome=cmndOutcome, log=1).exec(
+                """pwd""",
+        ).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
+
+        print(cmndOutcome.stdout)
+
+        if bpf.subProc.Op(outcome=cmndOutcome, cd="/var/log", log=1).bash(
+                """pwd""",
+        ).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
+
+        print(cmndOutcome.stdout)
+
+        if bpf.subProc.Op(outcome=cmndOutcome, cd="/var/log", uid='root', log=1).bash(
+                """id; pwd""",
+        ).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
+
+        print(cmndOutcome.stdout)
+
+        atAsSubProcOp = bpf.subProc.Op(outcome=cmndOutcome, cd="/var/log", uid='root', log=1)
+
+        if atAsSubProcOp.bash(
+                """id; pwd; whoami""",
+        ).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
+
+        print(cmndOutcome.stdout)
+
+        if bpf.subProc.opLog.bash(
+                """id; pwd; whoami""",
+        ).isProblematic():  return(icm.EH_badOutcome(bpf.subProc.opLog.outcome))
+
+        print(bpf.subProc.opLog.outcome.stdout)
+
+
 
         return cmndOutcome
 
