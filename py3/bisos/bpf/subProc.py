@@ -91,7 +91,7 @@ icmInfo['cmndParts'] = "IcmCmndParts[common] IcmCmndParts[param]"
 #from unisos import ucf
 from unisos import icm
 
-import shlex
+#import shlex
 import subprocess
 
 from bisos import bpf
@@ -137,7 +137,7 @@ if not (resStr := bpf.OpSubProc(outcome=cmndOutcome, log=1).sudoBash(
     fa2ensite {ploneBaseDomain}.conf,
 ).stdOut):  return(icm.EH_badOutcome(cmndOutcome))
 
-if bpf.OpSubProc(outcome=cmndOutcome, cwd=someDirBase, log=1).bash(
+if bpf.OpSubProc(outcome=cmndOutcome, cd=someDirBase, log=1).bash(
     fa2ensite {ploneBaseDomain}.conf,
 ).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
         """
@@ -176,6 +176,9 @@ if bpf.OpSubProc(outcome=cmndOutcome, cwd=someDirBase, log=1).bash(
 
         self.outcome.error = process.returncode # type: ignore
 
+        if self.log == 1:
+            print(self.outcome.stdout)
+
         return self.outcome
 
 
@@ -194,7 +197,7 @@ if not (resStr := bpf.OpSubProc(outcome=cmndOutcome, log=1).sudoBash(
     f"a2ensite {ploneBaseDomain}.conf",
 ).stdOut):  return(icm.EH_badOutcome(cmndOutcome))
 
-if bpf.OpSubProc(outcome=cmndOutcome, cwd=someDirBase, log=1).bash(
+if bpf.OpSubProc(outcome=cmndOutcome, cd=someDirBase, log=1).bash(
     f"a2ensite {ploneBaseDomain}.conf",
 ).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
         """
@@ -226,11 +229,12 @@ if bpf.OpSubProc(outcome=cmndOutcome, cwd=someDirBase, log=1).bash(
 
         return self.outcome
 
-
+#
+# NOTYET, we should do sameInstance bpf.instantiate.same(x)
+#
 opLog = Op(log=1,)
 
 opSilent = Op()
-
 
 
 

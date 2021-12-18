@@ -283,6 +283,7 @@ class BasicOp(object):
                  log=0,
     ):
         self.outcome = outcome
+        self.log = log
 
     def docStrClass(self,):
         return self.__class__.__doc__

@@ -212,15 +212,21 @@ class dirCreateExamples(icm.Cmnd):
         interactive=False,        # Can also be called non-interactively
     ) -> icm.OpOutcome:
         cmndOutcome = self.getOpOutcome()
-        if interactive:
-            if not self.cmndLineValidate(outcome=cmndOutcome):
+        if not self.obtainDocStr:
+            if interactive:
+                if not self.cmndLineValidate(outcome=cmndOutcome):
+                    return cmndOutcome
+
+            callParamsDict = {}
+            if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
                 return cmndOutcome
 
-        callParamsDict = {}
-        if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
-            return cmndOutcome
-
 ####+END:
+        docStr = """
+***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Various examples for creation of directorties.
+- examples and unit test for file:../bisos/bpf/dir.py
+        """
+        if self.docStrClassSet(docStr,): return cmndOutcome
 
         bpf.dir.createIfNotThere("/tmp/t1")
 
