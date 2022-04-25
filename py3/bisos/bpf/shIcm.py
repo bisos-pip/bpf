@@ -88,57 +88,25 @@ icmInfo['cmndParts'] = "IcmCmndParts[common] IcmCmndParts[param]"
 """
 ####+END:
 
-import sys
+import os
 
-class Error(Exception):
-    """Base class for exceptions in this module."""
-    pass
 
-class InputError(Error):
-    """Exception raised for errors in the input.
-
-    Attributes:
-        expression -- input expression in which the error occurred
-        message -- explanation of the error
-    """
-
-    def __init__(self, expression, message):
-        self.expression = expression
-        self.message = message
-
-class TransitionError(Error):
-    """Raised when an operation attempts a state transition that's not
-    allowed.
-
-    Attributes:
-        previous -- state at beginning of transition
-        next -- attempted new state
-        message -- explanation of why the specific transition is not allowed
-    """
-
-    def __init__(self, previous, next, message):
-        self.previous = previous
-        self.next = next
-        self.message = message
-
-####+BEGIN: bx:icm:py3:func :funcName "terminate" :funcType "" :retType "" :deco "" :argsList "" :comment "Instantiate specified class just once based on args."
+####+BEGIN: bx:icm:py3:func :funcName "comOpts" :funcType "" :retType "" :deco "" :argsList "abstOp" :comment "Instantiate specified class just once based on args."
 """
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Func-      :: /terminate/ =Instantiate specified class just once based on args.=  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Func-      :: /comOpts/ =Instantiate specified class just once based on args.=  [[elisp:(org-cycle)][| ]]
 """
-def terminate(
+def comOpts(
 ####+END:
-        prev,
-        next,
-        msg,
-    ):
+        abstctOp=None,
+    ) -> str:
     """
-** If dir exists, no action is taken, otherwise it is created.
+** Map pyIcm context to shIcm common options
     """
-    try:
-        raise TransitionError(prev, next, msg,)
-    except TransitionError as inst:
-        print(inst)
-        sys.exit(101)
+    result = """-h -v -n showRun"""
+    if not abstctOp:
+        return result
+    # NOTYET, analyze abstctOp and construct result
+    return result
 
 
 ####+BEGIN: bx:icm:python:section :title "End Of Editable Text"

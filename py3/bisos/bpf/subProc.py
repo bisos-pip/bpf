@@ -109,7 +109,7 @@ from bisos import bpf
 class Op(bpf.op.BasicOp):
 ####+END:
     """
-** Basic Operation.
+** Basic Operation -- Obsoleted By WOpW.
 """
     def __init__(
             self,
@@ -228,6 +228,141 @@ if bpf.OpSubProc(outcome=cmndOutcome, cd=someDirBase, log=1).bash(
         self.outcome.error = process.returncode # type: ignore
 
         return self.outcome
+
+
+####+BEGIN: bx:dblock:python:class :className "WOpW" :superClass "bpf.op.BasicOp" :comment "Basic Subprocess Within Operation Wrapper" :classType "basic"
+"""
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Class-basic :: /WOpW/ bpf.op.BasicOp  [[elisp:(org-cycle)][| ]]
+"""
+class WOpW(bpf.op.AbstractWithinOpWrapper):
+####+END:
+    """
+** Basic Subprocess Within Operation Wrapper (bash and exec),  returns an OpOutcome.
+"""
+    def __init__(
+            self,
+            invedBy=None,
+            log=1,
+            cd="",
+            uid=""
+    ):
+        super().__init__(invedBy, log,)
+        self.cd=cd
+        self.uid=uid
+
+    @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def bash(
+            self,
+            cmndStr,
+            stdin=None,
+    ):
+        """
+    subprocess.Popen() -- shell=True, runs cmndStr in bash.
+** TODO This should be renamed to subProc_bashOutcome and subProc_bashOut should become subProc_bash.
+
+** TODO BISOS Py Framework -- OpedSubProc -- Desired Usages:
+if not (resStr := bpf.OpSubProc(outcome=cmndOutcome, log=1).sudoBash(
+    fa2ensite {ploneBaseDomain}.conf,
+).stdOut):  return(icm.EH_badOutcome(cmndOutcome))
+
+if bpf.OpSubProc(outcome=cmndOutcome, cd=someDirBase, log=1).bash(
+    fa2ensite {ploneBaseDomain}.conf,
+).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
+        """
+        if not self.outcome:
+            self.outcome = bpf.op.Outcome()
+
+        if not stdin:
+            stdin = ""
+
+        fullCmndStr = cmndStr
+
+        if self.cd:
+            fullCmndStr = f"""pushd {self.cd}; {cmndStr}; popd;"""
+
+        if self.uid:
+            fullCmndStr = f"""sudo -u {self.uid} -- bash -c '{fullCmndStr}'"""
+
+        self.outcome.stdcmnd = fullCmndStr
+        try:
+            process = subprocess.Popen(
+                fullCmndStr,
+                shell=True,
+                encoding='utf8',
+                executable="/bin/bash",
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+        except OSError:
+            self.outcome.error = OSError
+        else:
+            self.outcome.stdout, self.outcome.stderr = process.communicate(input=format(stdin.encode()))
+            process.stdin.close() # type: ignore
+
+        process.wait() # type: ignore
+
+        self.outcome.error = process.returncode # type: ignore
+
+        if self.log == 1:
+            print(f"** cmnd= {fullCmndStr}")
+            if self.outcome.error:
+                print(f"*** exit= {self.outcome.error}")
+            if self.outcome.stdout:
+                print(f"*** stdout= {self.outcome.stdout}")
+            if self.outcome.stderr:
+                print(f"*** stderr= {self.outcome.stderr}")
+
+        return self.outcome
+
+
+    @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def exec(
+            self,
+            cmndStr,
+            stdin=None,
+    ):
+        """
+    subprocess.Popen() -- shell=True, runs cmndStr in bash.
+** TODO This should be renamed to subProc_bashOutcome and subProc_bashOut should become subProc_bash.
+
+** TODO BISOS Py Framework -- OpedSubProc -- Desired Usages:
+if not (resStr := bpf.OpSubProc(outcome=cmndOutcome, log=1).sudoBash(
+    f"a2ensite {ploneBaseDomain}.conf",
+).stdOut):  return(icm.EH_badOutcome(cmndOutcome))
+
+if bpf.OpSubProc(outcome=cmndOutcome, cd=someDirBase, log=1).bash(
+    f"a2ensite {ploneBaseDomain}.conf",
+).isProblematic():  return(icm.EH_badOutcome(cmndOutcome))
+        """
+        if not self.outcome:
+            self.outcome = bpf.op.Outcome()
+
+        if not stdin:
+            stdin = ""
+
+        self.outcome.stdcmnd = cmndStr
+        try:
+            process = subprocess.Popen(
+                cmndStr,
+                encoding='utf8',
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+        except OSError as exception:
+            self.outcome.error = exception
+            print(exception)
+        else:
+            self.outcome.stdout, self.outcome.stderr = process.communicate(input=format(stdin.encode()))
+            process.stdin.close() # type: ignore
+
+        process.wait() # type: ignore
+
+        self.outcome.error = process.returncode # type: ignore
+
+        return self.outcome
+
 
 #
 # NOTYET, we should do sameInstance bpf.instantiate.same(x)

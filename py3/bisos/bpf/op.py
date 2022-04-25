@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """\
-* *[Summary]* :: A /library/ Beginning point for development of new ICM oriented libraries.
+* *[pyIcmLib]* :: Operations Abstract Base Classes.
 """
 
 import typing
@@ -8,23 +8,31 @@ import typing
 icmInfo: typing.Dict[str, typing.Any] = { 'moduleDescription': ["""
 *       [[elisp:(org-show-subtree)][|=]]  [[elisp:(org-cycle)][| *Description:* | ]]
 **  [[elisp:(org-cycle)][| ]]  [Xref]          :: *[Related/Xrefs:]*  <<Xref-Here->>  -- External Documents  [[elisp:(org-cycle)][| ]]
-
 **  [[elisp:(org-cycle)][| ]]   Model and Terminology                                      :Overview:
-*** concept             -- Desctiption of concept
+** In Native-BISOS the primary entry to all that is executed is an Operation.
+** All operations are derived from the class AbstractOperation.
+** There are 4 abstractions under the AbstractOperation.
+** 1) Operations Support Facilities, logging, tracing, audit-trail, etc.
+** 2) AbstractWithinOperationWrappers: Wrappers that are aware of the context of operations
+** 3) AbstractRemoteOperations: For when an Operation is delegated to remote performance
+** 4) AbstractCommands: For enabling consistent invitation of Operations from command line.
 **      [End-Of-Description]
 """], }
 
 icmInfo['moduleUsage'] = """
 *       [[elisp:(org-show-subtree)][|=]]  [[elisp:(org-cycle)][| *Usage:* | ]]
-
-**      How-Tos:
+** +
+** These classes are to be sub-classed. There is no explicit direct usage.
 **      [End-Of-Usage]
 """
 
 icmInfo['moduleStatus'] = """
 *       [[elisp:(org-show-subtree)][|=]]  [[elisp:(org-cycle)][| *Status:* | ]]
 **  [[elisp:(org-cycle)][| ]]  [Info]          :: *[Current-Info:]* Status/Maintenance -- General TODO List [[elisp:(org-cycle)][| ]]
-** TODO [[elisp:(org-cycle)][| ]]  Current     :: For now it is an ICM. Turn it into ICM-Lib. [[elisp:(org-cycle)][| ]]
+** TODO Revisit implementation of all classes based on existing ICM.
+SCHEDULED: <2021-12-18 Sat>
+** TODO Transition to op.AbstractCommand from icm.Cmnd
+** TODO Fully shape up this module to reflect best templates.
 **      [End-Of-Status]
 """
 
@@ -155,7 +163,7 @@ There are also qmail errors starting at 100.
 
 
 """
-*  [[elisp:(org-cycle)][| ]]  [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(beginning-of-buffer)][Top]] [[elisp:(delete-other-windows)][(1)]] || Class-CMND        ::  Outcome -- .log() .isProblematic()   [[elisp:(org-cycle)][| ]]
+*  [[elisp:(org-cycle)][| ]]  [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(beginning-of-buffer)][Top]] [[elisp:(delete-other-windows)][(1)]] || Class-Basic        ::  Outcome -- .log() .isProblematic()   [[elisp:(org-cycle)][| ]]
 """
 class Outcome(object):
     """ Operation Outcome. Consisting Of Error and/or Result -- Operation Can Be Local Or Remote
@@ -283,6 +291,59 @@ class BasicOp(object):
                  log=0,
     ):
         self.outcome = outcome
+        self.log = log
+
+    def docStrClass(self,):
+        return self.__class__.__doc__
+
+    def users(self,):
+        return self.__class__.opUsers
+
+    def groups(self,):
+        return self.__class__.opGroups
+
+    def impact(self,):
+        return self.__class__.opImpact
+
+    def visibility(self,):
+        return self.__class__.opVisibility
+
+    def getOutcome(self):
+        if self.outcome:
+            return self.outcome
+        return Outcome(invokerName=self.myName())
+
+    def opMyName(self):
+        return self.__class__.__name__
+
+    def myName(self):
+        return self.opMyName()
+
+
+####+BEGIN: bx:dblock:python:class :className "AbstractWithinOpWrapper" :classType "basic"
+"""
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Class-basic :: /AbstractWithinOpWrapper/ object  [[elisp:(org-cycle)][| ]]
+"""
+class AbstractWithinOpWrapper(object):
+####+END:
+    """
+** Basic Operation.
+"""
+
+    opVisibility = ["all"]  # users, developers, internal
+    opUsers = []            # lsipusr
+    opGroups = []           # bystar
+    opImpact = []           # read, modify
+
+    def __init__(self,
+                 invedBy=None,
+                 log=0,
+    ):
+        self.invedBy = invedBy
+        if invedBy:
+            self.outcome = invedBy.cmndOutcome
+        else:
+            self.outcome = None
         self.log = log
 
     def docStrClass(self,):

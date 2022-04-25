@@ -3,6 +3,10 @@ from .dir import (createIfNotThere, create, createPathIfNotThere, removeIfThere,
 
 from .exception import (TransitionError, terminate,)
 
-from .op import (OpError, Outcome, BasicOp,)
+from .op import (OpError, Outcome, BasicOp, AbstractWithinOpWrapper)
 
-from .subProc import (Op, opLog, opSilent,)
+from .subProc import (Op, WOpW,  opLog, opSilent,)
+
+from .shIcm  import (comOpts,)
+
+from .pyRunAs import (User, as_root_writeToFile, as_gitSh_writeToFile)
