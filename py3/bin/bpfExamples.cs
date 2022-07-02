@@ -189,7 +189,6 @@ class examples(icm.Cmnd):
 
         cmndName = "subProcOpsExamples" ; menuItem(verbosity='little')
 
-
         return(cmndOutcome)
 
 
@@ -225,7 +224,7 @@ class dirCreateExamples(icm.Cmnd):
 ####+END:
         docStr = """
 ***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Various examples for creation of directorties.
-- examples and unit test for file:../bisos/bpf/dir.py
+- examples and smoke unit test for file: ../bisos/bpf/dir.py
         """
         if self.docStrClassSet(docStr,): return cmndOutcome
 
@@ -298,6 +297,13 @@ class subProcOpsExamples(icm.Cmnd):
                 return cmndOutcome
 
 ####+END:
+
+        docStr = """
+***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Various ways of using bpf.subProc.Op paralelling Bash ICM
+- examples and unit smoke test for file: ../bisos/bpf/subProc.py
+        """
+        if self.docStrClassSet(docStr,): return cmndOutcome
+
 
         if not (resStr := bpf.subProc.Op(outcome=cmndOutcome, log=1).bash(
                 f"""echo Hello There""",
