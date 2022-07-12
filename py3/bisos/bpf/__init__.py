@@ -10,3 +10,5 @@ from .subProc import (Op, WOpW,  opLog, opSilent,)
 from .shIcm  import (comOpts,)
 
 from .pyRunAs import (User, as_root_writeToFile, as_gitSh_writeToFile)
+
+from .comment  import (orgMode)

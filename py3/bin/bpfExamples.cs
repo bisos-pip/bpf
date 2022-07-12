@@ -114,7 +114,7 @@ g_importedCmndsModules = [       # Enumerate modules from which CMNDs become inv
 
 
 ####+BEGIN: bx:icm:python:section :title "= =Framework::= Options, Arguments and Examples Specifications ="
-"""
+"""y
 *  [[elisp:(beginning-of-buffer)][Top]] ############## [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(delete-other-windows)][(1)]]    *= =Framework::= Options, Arguments and Examples Specifications =*  [[elisp:(org-cycle)][| ]]  [[elisp:(org-show-subtree)][|=]]
 """
 ####+END:
@@ -189,6 +189,11 @@ class examples(icm.Cmnd):
 
         cmndName = "subProcOpsExamples" ; menuItem(verbosity='little')
 
+        cmndName = "bashCmndWithArgsAndResult" ; cmndArgs = "print this and that" ;
+        cps=cpsInit() ;
+        menuItem(verbosity='little')
+
+
         return(cmndOutcome)
 
 
@@ -223,7 +228,7 @@ class dirCreateExamples(icm.Cmnd):
 
 ####+END:
         docStr = """
-***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Various examples for creation of directorties.
+***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Various examples for creation of directories.
 - examples and smoke unit test for file: ../bisos/bpf/dir.py
         """
         if self.docStrClassSet(docStr,): return cmndOutcome
@@ -297,7 +302,6 @@ class subProcOpsExamples(icm.Cmnd):
                 return cmndOutcome
 
 ####+END:
-
         docStr = """
 ***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Various ways of using bpf.subProc.Op paralelling Bash ICM
 - examples and unit smoke test for file: ../bisos/bpf/subProc.py
@@ -352,6 +356,129 @@ class subProcOpsExamples(icm.Cmnd):
 
 
         return cmndOutcome
+
+####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "bashCmndWithArgsAndResult" :comment "" :parsMand "" :parsOpt "" :argsMin "1" :argsMax "9999" :asFunc "" :interactiveP ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc    [[elisp:(outline-show-subtree+toggle)][||]] /bashCmndWithArgsAndResult/ parsMand= parsOpt= argsMin=1 argsMax=9999 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+#+end_org """
+class bashCmndWithArgsAndResult(icm.Cmnd):
+    cmndParamsMandatory = [ ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 1, 'Max': 9999,}
+
+    @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+        interactive=False,        # Can also be called non-interactively
+        argsList=[],         # or Args-Input
+    ) -> icm.OpOutcome:
+        cmndOutcome = self.getOpOutcome()
+        if interactive:
+            if not self.cmndLineValidate(outcome=cmndOutcome):
+                return cmndOutcome
+            effectiveArgsList = G.icmRunArgsGet().cmndArgs  # type: ignore
+        else:
+            effectiveArgsList = argsList
+
+        callParamsDict = {}
+        if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
+            return cmndOutcome
+
+        cmndArgsSpecDict = self.cmndArgsSpec()
+        if not self.cmndArgsValidate(effectiveArgsList, cmndArgsSpecDict, outcome=cmndOutcome):
+            return cmndOutcome
+####+END:
+        self.cmndDocStr(f""" #+begin_org \
+***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] This is an example of a CmndSvc with lots of features.
+The features include:
+
+        1) An optional parameter called someParam
+        2) A first mandatory argument called action which must be one of list or print.
+        3) An optional set of additional argumets.
+
+The param, and args are then validated and form a single string.
+That string is then echoed in a sub-prococessed. The stdout of that sub-proc is assigned
+to a variable similar to bash back-quoting.
+
+And that variable is then printed.
+
+Variations of this are captured as snippets to be used.
+        #+end_org """)
+
+        cmndOutcome = self.getOpOutcome()
+
+        action = self.cmndArgsGet("0", cmndArgsSpecDict, effectiveArgsList)
+        actionArgs = self.cmndArgsGet("1&9999", cmndArgsSpecDict, effectiveArgsList)
+
+        actionArgsStr = ""
+        for each in actionArgs:
+            actionArgsStr = actionArgsStr + " " + each
+
+        actionAndArgs = f"""{action} {actionArgsStr}"""
+
+
+        bpf.comment.orgMode(""" #+begin_org
+*****  [[elisp:(org-cycle)][| *Note:* | ]] subProc is Wrapped Within an Operation.
+So, the outcome is the invoker's and the stdout result can be checked and assigned.
+This is similar to Bash's  resStr=$(${actionAndArgs})
+stderr is captured in cmndOutcome.stderr.
+The exit code is captured in cmndOutcome.exitCode.
+        #+end_org """)
+
+        if not (resStr := bpf.subProc.WOpW(invedBy=self, log=1).bash(
+                f"""{actionAndArgs}""",
+        ).stdout):  return(icm.EH_badOutcome(cmndOutcome))
+
+        print(resStr)
+
+        subProcInFuncReturningOutcome(f"""{actionAndArgs}""")
+
+        return cmndOutcome.set(
+            opError=icm.OpError.Success,
+            opResults=None,
+        )
+
+####+BEGIN: bx:icm:python:method :methodName "cmndArgsSpec" :methodType "anyOrNone" :retType "bool" :deco "default" :argsList ""
+    """
+**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Method-anyOrNone :: /cmndArgsSpec/ retType=bool argsList=nil deco=default  [[elisp:(org-cycle)][| ]]
+#+end_org """
+    @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmndArgsSpec(self):
+####+END:
+        """
+***** Cmnd Args Specification
+      """
+        cmndArgsSpecDict = icm.CmndArgsSpecDict()
+        cmndArgsSpecDict.argsDictAdd(
+            argPosition="0",
+            argName="action",
+            argChoices=['echo', 'pwd', 'ls', 'date'],
+            argDescription="Action to be specified by rest"
+        )
+        cmndArgsSpecDict.argsDictAdd(
+            argPosition="1&9999",
+            argName="actionArgs",
+            argChoices=[],
+            argDescription="Rest of args for use by action"
+        )
+
+        return cmndArgsSpecDict
+
+####+BEGIN: bx:icm:python:func :funcName "subProcInFuncReturningOutcome" :funcType "anyOrNone" :retType "bool" :deco "" :argsList "cmndStr"
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-anyOrNone [[elisp:(outline-show-subtree+toggle)][||]] /subProcInFuncReturningOutcome/ retType=bool argsList=(cmndStr)  [[elisp:(org-cycle)][| ]]
+#+end_org """
+def subProcInFuncReturningOutcome(
+    cmndStr,
+):
+####+END:
+    outcome =  bpf.subProc.WOpW(invedBy=None, log=1).bash(
+        f"""{cmndStr}""")
+
+    print(outcome.stdout)
+    if outcome.isProblematic():
+        icm.EH_badOutcome(outcome)
+    return outcome
+
 
 
 ####+BEGIN: bx:icm:python:section :title "= =Framework::=   __main__ g_icmMain ="
