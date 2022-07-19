@@ -298,6 +298,7 @@ if bpf.OpSubProc(outcome=cmndOutcome, cd=someDirBase, log=1).bash(
             self.outcome.error = OSError
         else:
             self.outcome.stdout, self.outcome.stderr = process.communicate(input=format(stdin.encode()))
+            self.outcome.stdoutRstrip = self.outcome.stdout.rstrip('\n')
             process.stdin.close() # type: ignore
 
         process.wait() # type: ignore

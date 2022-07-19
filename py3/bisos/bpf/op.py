@@ -102,11 +102,11 @@ from unisos import icm
 from enum import Enum
 
 ####+BEGIN: bx:dblock:python:class :className "OpError" :superClass "Enum" :comment "" :classType "basic"
-"""
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Class-basic :: /OpError/ Enum  [[elisp:(org-cycle)][| ]]
-"""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Class-basic [[elisp:(outline-show-subtree+toggle)][||]] /OpError/ Enum  [[elisp:(org-cycle)][| ]]
+#+end_org """
 class OpError(Enum):
-    ####+END:
+####+END:
     Success = 0
     Failure = 1
     ShellBuiltinMisuse = 2
@@ -207,6 +207,9 @@ opResults = opOutcome.results
         self.stdout = opStdout
         self.stderr = opStderr
         self.stdcmnd = opStdcmnd
+        if self.stdout:
+            self.stdoutRstrip = self.stdout.rstrip('\n')
+
 
     def set(self,
             invokerName=None,
@@ -227,6 +230,7 @@ opResults = opOutcome.results
             self.results = opResults
         if opStdout != None:
             self.stdout = opStdout
+            self.stdoutRstrip = opStdout.rstrip('\n')
         if opStderr != None:
             self.stderr = opStderr
         if opStdcmnd != None:

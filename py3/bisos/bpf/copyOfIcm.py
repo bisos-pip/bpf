@@ -89,7 +89,8 @@ class Cmnd(object):
                  cmndOutcome = None,  
     ):
         self.cmndLineInputOverRide = cmndLineInputOverRide
-        self.cmndOutcome = cmndOutcome       
+        self.cmndOutcome = cmndOutcome
+        self.obtainDocStr = False
 
     def docStrClass(self,):
         return self.__class__.__doc__
@@ -97,10 +98,23 @@ class Cmnd(object):
     def docStrCmndMethod(self,):
         return self.cmnd.__doc__
 
+    def cmndDocStr(self, inStr):
+        if self.cmnd.__doc__:
+            self.cmnd.__func__.__doc__ = f"""{self.cmnd.__doc__}\n{inStr}"""
+        else:
+            self.cmnd.__func__.__doc__ = inStr
+
+    def docStrClassSet(self, docStr):
+        """attribute '__doc__' of 'method' objects is not writable, so we use class."""
+        self.__class__.__doc__ = docStr
+        return self.obtainDocStr
+
+    def obtainDocStrSet(self):
+        self.obtainDocStr = True
+
     def docStrCmndDesc(self,):
         return self.cmnd.cmndDesc.__doc__
 
-    
     def paramsMandatory(self,):
         return self.__class__.cmndParamsMandatory
 
@@ -128,7 +142,9 @@ class Cmnd(object):
     def getOpOutcome(self):
         if self.cmndOutcome:
             return self.cmndOutcome
-        return OpOutcome(invokerName=self.myName())
+        self.cmndOutcome = OpOutcome(invokerName=self.myName())
+        return self.cmndOutcome
+        #return OpOutcome(invokerName=self.myName())
 
     def cmndLineValidate(
             self,
@@ -251,6 +267,7 @@ class Cmnd(object):
             
     def cmnd(self, interactive=False):
         print("This is default Cmnd Class Definition -- It is expected to be overwritten. You should never see this.")
+
 
     def cmndArgsSpec(self):
         # This is default Cmnd Class Definition -- It is expected to be overwritten. You should never see this."
@@ -386,7 +403,145 @@ class Cmnd(object):
                         
         return retVal
 
-        
+    def cmndCallTimeKwArgs(self,):
+        """
+** All value full icmpParams are then written off as file params.
+        """
+        G = IcmGlobalContext()
+        icmRunArgs = G.icmRunArgsGet()
+
+        applicableCmndKwArgs = dict()
+
+        g_parDict = IcmGlobalContext().icmParamDictGet().parDictGet()
+
+        for each in self.cmndParamsMandatory:
+            try:
+                eachIcmParam = g_parDict[each]
+            except  KeyError:
+                print(f"BadUsage: Missing parameter definition: {each}")
+                return
+            else:
+                if not icmRunArgs.__dict__[each]:
+                    print(f"BadUsage: Missing mandatory parameter zz: {each}")
+                    return
+                applicableCmndKwArgs.update({each: icmRunArgs.__dict__[each]})
+                continue
+
+        for each in self.cmndParamsOptional:
+            try:
+                eachIcmParam = g_parDict[each]
+            except  KeyError:
+                # That is okay. An optionale param was not specified.
+                continue
+            else:
+                applicableCmndKwArgs.update({each: icmRunArgs.__dict__[each]})
+                continue
+
+        if icmRunArgs.cmndArgs:
+            applicableCmndKwArgs.update({'argsList': icmRunArgs.cmndArgs})
+
+        # print(f"YYY == {applicableCmndKwArgs}")
+        return applicableCmndKwArgs
+
+    def invModel(self,
+            baseDir,
+    ):
+        """
+** Writes out all inputs of the command as file parameters.
+** Can be invoked from cmnd-line with --insAsFPs=basePath instead of cmnd().
+** Returns an outcome.
+** cmndParamsMandatory and optionals are walked through in icmRunArgs.
+** Their values are then set in icmParam.
+** All value full icmpParams are then written off as file params.
+        """
+        G = IcmGlobalContext()
+        icmRunArgs = G.icmRunArgsGet()
+
+        # print(f"cmndParamsMandatory={self.cmndParamsMandatory}")
+        # print(f"cmndParamsOptional={self.cmndParamsOptional}")
+
+        if not pathlib.Path(baseDir).is_dir():
+            print(f"BadUsage: Missing {baseDir}")
+            return
+
+        #print(icmRunArgs)
+
+        applicableIcmParams = ICM_ParamDict()
+
+        def absorbApplicableIcmParam(icmParam, each):
+            # print(f"4444 {each} {icmRunArgs.__dict__[each]}")
+            icmParam.parValueSet(icmRunArgs.__dict__[each])
+            applicableIcmParams.parDictAppend(eachIcmParam)
+
+        g_parDict = IcmGlobalContext().icmParamDictGet().parDictGet()
+
+        # print(g_parDict)
+
+        for each in self.cmndParamsMandatory:
+            try:
+                eachIcmParam = g_parDict[each]
+            except  KeyError:
+                print(f"BadUsage: Missing parameter definition: {each}")
+                return
+            else:
+                if not icmRunArgs.__dict__[each]:
+                    print(f"BadUsage: Missing mandatory parameter: {each}")
+                    return
+                absorbApplicableIcmParam(eachIcmParam, each,)
+                # applicableIcmParams.parDictAppend(eachIcmParam)
+                continue
+
+        for each in self.cmndParamsOptional:
+            try:
+                eachIcmParam = g_parDict[each]
+            except  KeyError:
+                # That is okay. An optionale param was not specified.
+                continue
+            else:
+                absorbApplicableIcmParam(eachIcmParam, each,)
+                continue
+
+        cmndParamsBase = pathlib.Path(baseDir).joinpath('cmndPars')
+        cmndParamsBase.mkdir(parents=True, exist_ok=True)
+
+        icmParamsToFileParamsUpdate(
+            parRoot=cmndParamsBase,
+            icmParams=applicableIcmParams,
+        )
+
+        FILE_ParamWriteToPath(
+            parNameFullPath=pathlib.Path(baseDir).joinpath('icmName'),
+            parValue=G.icmMyName()
+        )
+
+        FILE_ParamWriteToPath(
+            parNameFullPath=pathlib.Path(baseDir).joinpath('cmndName'),
+            parValue=G.icmRunArgsGet().invokes[0]
+        )
+
+        print(applicableIcmParams)
+
+        outcome = OpOutcome()
+        return outcome
+
+        # icmParam = g_parDict['bpoId']
+
+        # icmParam.parValueSet("ZZZZHHHHLLLL")
+
+        # for each in icmRunArgs.__dict__:
+        #     print(each)
+        #     if icmRunArgs.__dict__[each]:
+        #         print(f"JJMM --- {each}")
+        #         print(f"kkjj -- {icmRunArgs.__dict__[each]}")
+
+        #         # g_param = g_parDict[each]
+
+        # for key, icmParam in IcmGlobalContext().icmParamDictGet().parDictGet().items():
+        #     if ( icmParam.argsparseShortOptGet() == None )  and ( icmParam.argsparseLongOptGet() == None ):
+        #         break
+        #     print(f"JJ {key} LL {icmParam}")
+
+
 
 ####+BEGIN: bx:icm:python:func :funcName "cmndArgPositionToMinAndMax" :funcType "anyOrNone" :retType "bool" :deco "" :argsList "argPosStr"
 """
@@ -550,6 +705,8 @@ import subprocess
 
 #from unisos.ucf import ucf
 from unisos import ucf
+
+import pathlib
 
 import getpass
 
@@ -829,6 +986,8 @@ opResults = opOutcome.results
         else:
             return False
 
+    def exitCode(self):
+        return self.error
 
     def log(self):
         G = IcmGlobalContext()
@@ -858,6 +1017,12 @@ def opSuccess():
         OpOutcome()
     )
 
+def opSuccessAnNoResult(cmndOutcome):
+    """."""
+    return cmndOutcome.set(
+        opError=OpError.Success,  # type: ignore
+        opResults=None,
+    )
 
 class OpRemoteCmnd(object):
     """ Remote operation specification and invocation of an CMND through ICM command line.
@@ -976,6 +1141,9 @@ class Interactivity():
 """
 *  [[elisp:(org-cycle)][| ]]  [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(beginning-of-buffer)][Top]] [[elisp:(delete-other-windows)][(1)]] || Func             ::  subjectToTracking    [[elisp:(org-cycle)][| ]]
 """
+
+# https://stackoverflow.com/questions/739654/how-to-make-function-decorators-and-chain-them-together
+# https://stackoverflow.com/questions/11731136/class-method-decorator-with-self-arguments
 
 def subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True):
     """[DECORATOR-WITH-ARGS:]  Passes parameters to subSubjectToTracking. See subSubjectToTracking.
@@ -2123,8 +2291,10 @@ class FILE_TreeObject(object):
     And is expected to be compatible with lcnObjectTree.libSh.
 
     A FILE_TreeObject is either a
-       - FILE_TreeNode
+       - FILE_TreeNode  # MB-2022, FILE_TreeBranch
        - FILE_TreeLeaf
+
+    # MB-2022 An FTO_Node is either of FTO_Branch of FTO_Leaf
 
     A FILE_TreeObject consists of:
        1) FileSysDir
@@ -2800,8 +2970,8 @@ def FILE_paramDictRead(interactive=Interactivity.Both,
 
     if Interactivity().interactiveInvokation(interactive):
         icmRunArgs = G.icmRunArgsGet()
-        if cmndArgsLengthValidate(cmndArgs=icmRunArgs.cmndArgs, expected=0, comparison=int__gt):
-            return(ReturnCode.UsageError)
+        #if cmndArgsLengthValidate(cmndArgs=icmRunArgs.cmndArgs, expected=0, comparison=int__gt):
+            #return(ReturnCode.UsageError)
     
         inPathList = []
         for thisPath in icmRunArgs.cmndArgs:
@@ -2927,6 +3097,9 @@ def cmndCallParamsValidate(
 ):
     """Expected to be used in all CMNDs.
 
+MB-2022 --- This is setting the variable not validating it.
+    Perhaps the function should have been cmndCallParamsSet.
+
 Usage Pattern:
 
     if not icm.cmndCallParamValidate(FPsDir, interactive, outcome=cmndOutcome):
@@ -2940,13 +3113,21 @@ Usage Pattern:
 
     for key  in callParamDict:
         # print(f"111 {key}")
+        # interactive could be true in two situations:
+        # 1) When a cs is executed on cmnd-line.
+        # 2) When a cs is invoked with interactive as true.
+        # When (2) callParamDict[key] is expcted to be true by having been specified at invokation.
+        #
         if not callParamDict[key]:
-            if not interactive:
-                return eh_problem_usageError(
-                    outcome,
-                    "Missing Non-Interactive Arg {}".format(key),
-                )
-            exec("callParamDict[key] = IcmGlobalContext().usageParams." + key)
+            # MB-2022 The logic here seems wrong. When non-interactive, only mandattories
+            # should be verified.
+            # if not interactive:
+            #     return eh_problem_usageError(
+            #         outcome,
+            #         "Missing Non-Interactive Arg {}".format(key),
+            #     )
+            if interactive:
+                exec("callParamDict[key] = IcmGlobalContext().usageParams." + key)
             # print(f"222 {callParamDict[key]}")
 
             
@@ -2992,8 +3173,8 @@ def FILE_paramDictReadDeep(interactive=Interactivity.Both,
 
     if Interactivity().interactiveInvokation(interactive):
         icmRunArgs = G.icmRunArgsGet()
-        if cmndArgsLengthValidate(cmndArgs=icmRunArgs.cmndArgs, expected=0, comparison=int__gt):
-            return(ReturnCode.UsageError)
+        #if cmndArgsLengthValidate(cmndArgs=icmRunArgs.cmndArgs, expected=0, comparison=int__gt):
+            #return(ReturnCode.UsageError)
     
         inPathList = []
         for thisPath in icmRunArgs.cmndArgs:
@@ -3001,6 +3182,8 @@ def FILE_paramDictReadDeep(interactive=Interactivity.Both,
     else:
         if inPathList == None:
             return EH_critical_usageError('inPathList is None and is Non-Interactive')                    
+
+    fileParamsDict = {}
 
     for thisPath in inPathList:
         #absolutePath = os.path.abspath(thisPath)
@@ -3021,9 +3204,11 @@ def FILE_paramDictReadDeep(interactive=Interactivity.Both,
                     EH_problem_info("Missing " + root)
                     continue
 
-                print((root + "=" + fileParam.parValueGet()))
+                fileParamsDict.update({root:fileParam.parValueGet()})
+                if interactive:
+                    print((root + "=" + fileParam.parValueGet()))
 
-    return
+    return fileParamsDict
 
 
 """
@@ -3857,6 +4042,41 @@ def argsCommonProc(parser):
          default='fullRun'
          )
 
+     # NOTYET, delete this
+     parser.add_argument(
+         '--insAsFPs',
+         dest='insAsFPs',
+         metavar='ARG',
+         action='store',
+         default='None',
+         help="Emit all inputs as FileParams At Specified Base",
+         )
+
+     parser.add_argument(
+         '--csBase',
+         dest='csBase',
+         action='store',
+         default='None',
+         help="Command Services Base",
+         )
+
+     parser.add_argument(
+         '--invModel',
+         dest='invModel',
+         action='store',
+         default='None',
+         help="Emit all inputs as FileParams At Specified Base",
+         )
+
+     parser.add_argument(
+         '--perfModel',
+         dest='perfModel',
+         action='store',
+         default='None',
+         help="Emit all inputs as FileParams At Specified Base",
+         )
+
+
      parser.add_argument(
          '-v',
          '--verbosity',
@@ -4423,8 +4643,7 @@ def cmndArgsLengthValidate(cmndArgs=ArgReq.Mandatory,
                        ):
     cmndArgsLen=len(cmndArgs)
     if comparison(cmndArgsLen, expected):
-        EH_critical_usageError("Bad Number Of cmndArgs: cmndArgs={cmndArgs}"
-                                 .format(cmndArgs=cmndArgs))
+        EH_critical_usageError(f"Bad Number Of cmndArgs: cmndArgs={cmndArgs} cmndArgsLen={cmndArgsLen} expected={expected}")
         return(1)
     return(0)
         
@@ -4701,6 +4920,7 @@ def G_mainWithClass(
             
         outcome = invokesProcAllClassed(
             classedCmndsDict,
+            icmRunArgs
         )
 
         if g_icmPostCmnds:
@@ -4761,7 +4981,10 @@ def G_mainWithClass(
             if type(mainEntry) is types.FunctionType:
                 mainEntry()
             else:
-                mainEntry().cmnd()
+                cmndKwArgs = mainEntry().cmndCallTimeKwArgs()
+                cmndKwArgs.update({'interactive': True})
+                outcome = mainEntry().cmnd(**cmndKwArgs)
+                return outcome.error
 
     return 0
 
@@ -4770,10 +4993,37 @@ def G_mainWithClass(
 """
 def invokesProcAllClassed(
         classedCmndsDict,
+        icmRunArgs,
 ):
     """Process all invokations applicable to all (classed+funced of mains+libs) CMNDs."""
     G = IcmGlobalContext()
     icmRunArgs = G.icmRunArgsGet()
+
+    def applyMethodBasedOnContext(
+            classedCmnd,
+    ):
+        """ Chooses the method to apply Cmnd() to.
+        """
+        invModel = icmRunArgs.invModel  # This can be a "None" string but not a None
+        csBase = icmRunArgs.csBase
+
+        if invModel != "None":
+            if csBase == "None":
+                print(f"BadUsage: Missing csBase, invModel={invModel}")
+                outcome = OpOutcome()
+                outcome.error = OpError.CmndLineUsageError
+                outcome.errInfo = f"BadUsage: Missing csBase, invModel={invModel}"
+            else:
+                outcome = classedCmnd().invModel(csBase)
+        else:
+            #
+            # applicableIcmParams = classedCmnd().absorbApplicableIcmParam()
+            # outcome = classedCmnd().cmnd(**applicableIcmParams)
+            #
+            cmndKwArgs = classedCmnd().cmndCallTimeKwArgs()
+            cmndKwArgs.update({'interactive': True})
+            outcome = classedCmnd().cmnd(**cmndKwArgs)
+        return outcome
 
     for invoke in icmRunArgs.invokes:
         #print(f"Looking for {invoke}")
@@ -4787,9 +5037,7 @@ def invokesProcAllClassed(
             pass
         else:
             #print(f"Found {classedCmnd}")
-            outcome = classedCmnd().cmnd(
-                interactive=True, 
-            )
+            outcome = applyMethodBasedOnContext(classedCmnd)
             continue
 
         #
@@ -4801,7 +5049,7 @@ def invokesProcAllClassed(
             try:
                 callDict[eachCmnd] = eval("{eachCmnd}".format(eachCmnd=eachCmnd))
             except NameError:
-                print(("EH_problem -- Skipping eval({eachCmnd})".format(eachCmnd=eachCmnd)))
+                # print(("EH_problem -- Skipping-b eval({eachCmnd})".format(eachCmnd=eachCmnd)))
                 continue
 
         try:
@@ -4809,9 +5057,7 @@ def invokesProcAllClassed(
         except  KeyError:
             pass
         else:
-            outcome =  classedCmnd().cmnd(
-                interactive=True, 
-            )
+            outcome = applyMethodBasedOnContext(classedCmnd)
             continue
 
         #
@@ -4829,6 +5075,22 @@ def invokesProcAllClassed(
         outcome.error = OpError.CmndLineUsageError
         outcome.errInfo = "Invalid Action: {invoke}".format(invoke=invoke)
 
+    perfModel = icmRunArgs.perfModel  # This can be a "None" string but not a None
+
+    #     if insAsFP_baseDir != "None":
+    if perfModel != "None":
+        print("Capturing outcome")
+        csBase = icmRunArgs.csBase
+        if csBase == "None":
+            print(f"Missing csBase")
+        else:
+            FILE_ParamWriteToPath(
+                parNameFullPath=pathlib.Path(csBase).joinpath('result'),
+                parValue=outcome.results
+            )
+
+
+    # Check for perfModel and capture outcome
     return(outcome)
 
 
@@ -5099,6 +5361,12 @@ class cmndInfo(Cmnd):
             str=cmndDocStrFull().cmnd(
                 interactive=False,
                 cmndName=cmndName,
+        )))
+        outString.append("{baseOrgStr} classDocStrOf={str}\n".format(
+            baseOrgStr=orgIndentStr(1),
+            str=classDocStrOf().cmnd(
+                interactive=False,
+                argsList=[cmndName],
         )))
         outString.append("{baseOrgStr} cmndParamsMandatory={str}\n".format(
             baseOrgStr=orgIndentStr(1),
@@ -5572,6 +5840,50 @@ class cmndDocStrFull(Cmnd):
         
         if interactive: print(longDocStr)
         return longDocStr
+
+
+#
+# NOTYET. Added on 12/16/2021.
+
+####+BEGINNOT: bx:icm:python:cmnd:classHead :cmndName "classDocStrOf" :comment "" :parsMand "" :parsOpt "" :argsMin "1" :argsMax "1" :asFunc "" :interactiveP ""
+"""
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  ICM-Cmnd   :: /classDocStrOf/ parsMand= parsOpt= argsMin=1 argsMax=1 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+"""
+class classDocStrOf(Cmnd):
+    cmndParamsMandatory = [ ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 1, 'Max': 1,}
+
+    subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+        interactive=False,        # Can also be called non-interactively
+        argsList=[],         # or Args-Input
+    ) -> OpOutcome:
+        cmndOutcome = self.getOpOutcome()
+        if interactive:
+            if not self.cmndLineValidate(outcome=cmndOutcome):
+                return cmndOutcome
+            effectiveArgsList = G.icmRunArgsGet().cmndArgs  # type: ignore
+        else:
+            effectiveArgsList = argsList
+
+        callParamsDict = {}
+        if not cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
+            return cmndOutcome
+
+        cmndArgsSpecDict = self.cmndArgsSpec()
+        if not self.cmndArgsValidate(effectiveArgsList, cmndArgsSpecDict, outcome=cmndOutcome):
+            return cmndOutcome
+####+END:
+        if self.docStrClassSet("""\
+** fullUpdate docString is here."""
+                               ): return cmndOutcome
+
+        #thisCmnd = fullUpdate()
+        thisCmnd = eval(f"__main__.{effectiveArgsList[0]}()")
+        thisCmnd.obtainDocStrSet()
+        thisCmnd.cmnd()
+        return f"{thisCmnd.docStrClass()}"
 
 
 """
