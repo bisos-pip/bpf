@@ -279,9 +279,9 @@ class exceptionExamples(icm.Cmnd):
 
 
 ####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "subProcOpsExamples" :comment "" :parsMand "" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
-"""
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  ICM-Cmnd   :: /subProcOpsExamples/ parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
-"""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc    [[elisp:(outline-show-subtree+toggle)][||]] <<subProcOpsExamples>> parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+#+end_org """
 class subProcOpsExamples(icm.Cmnd):
     cmndParamsMandatory = [ ]
     cmndParamsOptional = [ ]
@@ -292,14 +292,13 @@ class subProcOpsExamples(icm.Cmnd):
         interactive=False,        # Can also be called non-interactively
     ) -> icm.OpOutcome:
         cmndOutcome = self.getOpOutcome()
-        if not self.obtainDocStr:
-            if interactive:
-                if not self.cmndLineValidate(outcome=cmndOutcome):
-                    return cmndOutcome
-
-            callParamsDict = {}
-            if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
+        if interactive:
+            if not self.cmndLineValidate(outcome=cmndOutcome):
                 return cmndOutcome
+
+        callParamsDict = {}
+        if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
+            return cmndOutcome
 
 ####+END:
         docStr = """

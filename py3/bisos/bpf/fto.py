@@ -98,9 +98,6 @@ class FileTreeItem(enum.Enum):
     IgnoreBranch = 'ignoreBranch'
     IgnoreLeaf = 'ignoreLeaf'
 
-"""
-*  [[elisp:(org-cycle)][| ]]  [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(beginning-of-buffer)][Top]] [[elisp:(delete-other-windows)][(1)]] || Class            ::  FILE_TreeObject    [[elisp:(org-cycle)][| ]]
-"""
 ####+BEGIN: bx:dblock:python:class :className "FILE_TreeObject" :superClass "" :comment "" :classType "basic"
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Class-basic [[elisp:(outline-show-subtree+toggle)][||]] /FILE_TreeObject/ object  [[elisp:(org-cycle)][| ]]
