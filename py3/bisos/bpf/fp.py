@@ -577,18 +577,16 @@ class FileParam(object):
         return
 
 
-
-
-
-"""
-*  [[elisp:(org-cycle)][| ]]  [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(beginning-of-buffer)][Top]] [[elisp:(delete-other-windows)][(1)]] || Class            ::  FileParamDict    [[elisp:(org-cycle)][| ]]
-"""
-
+####+BEGIN: bx:dblock:python:class :className "FileParamDict" :superClass "" :comment "" :classType "basic"
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-basic  [[elisp:(outline-show-subtree+toggle)][||]] /FileParamDict/ object  [[elisp:(org-cycle)][| ]]
+#+end_org """
 class FileParamDict(object):
-    """Maintain a list of FileParams.
-
+####+END:
+    """ #+begin_org
+** [[elisp:(org-cycle)][| DocStr| ]] Maintain a list of FileParams.
     NOTYET, nesting of dictionaries.
-    """
+    #+end_org """
 
     def __init__(self):
         self.__fileParamDict = dict()
@@ -628,12 +626,9 @@ class FileParamDict(object):
 
         return self.__fileParamDict
 
-
-
-
-####+BEGIN: bx:icm:py3:section :title "*Functional Interface*"
+####+BEGIN: bx:icm:py3:section :title "*Individual Write Params Functional Interface*"
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  /Section/    [[elisp:(outline-show-subtree+toggle)][||]] **Functional Interface**  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  /Section/    [[elisp:(outline-show-subtree+toggle)][||]] **Individual Write Params Functional Interface**  [[elisp:(org-cycle)][| ]]
 #+end_org """
 ####+END:
 
@@ -643,7 +638,7 @@ class FileParamDict(object):
 #+end_org """
 @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
 def FileParamWriteTo(
-####+END:
+####+END:d
         parRoot=None,
         parName=None,
         parValue=None,
@@ -703,6 +698,43 @@ def FileParamWriteToFromFile(
         return icm.EH_critical_usageError('')
 
     return thisFileParam.writeToFromFile(storeBase=parRoot, parValueFile=parValueFile)
+
+
+####+BEGIN: bx:icm:py3:func :funcName "FileParamVerWriteTo" :funcType "extTyped" :retType "extTyped" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /FileParamVerWriteTo/ deco=icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+def FileParamVerWriteTo(
+####+END:
+        parRoot=None,
+        parName=None,
+        parVerTag=None,
+        parValue=None,
+):
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Given ticmoBase, Create parName, then assign parValue to parVerTag
+    #+end_org """
+
+    parFullPath = os.path.join(parRoot, parName)
+    try: os.makedirs( parFullPath, 0o777 )
+    except OSError: pass
+
+    thisFileParam = FileParam(parName=parVerTag,
+                                    parValue=parValue,
+                                    )
+
+    if thisFileParam == None:
+        return icm.EH_critical_usageError('')
+
+    return thisFileParam.writeTo(storeBase=parFullPath)
+
+
+####+BEGIN: bx:icm:py3:section :title "*Individual Read Params Functional Interface*"
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  /Section/    [[elisp:(outline-show-subtree+toggle)][||]] **Individual Read Params Functional Interface**  [[elisp:(org-cycle)][| ]]
+#+end_org """
+####+END:
 
 
 ####+BEGIN: bx:icm:py3:func :funcName "FileParamReadFrom" :funcType "extTyped" :retType "extTyped" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
@@ -822,35 +854,6 @@ def FileParamValueReadFromPath(
     return(filePar.parValueGet())
 
 
-####+BEGIN: bx:icm:py3:func :funcName "FileParamVerWriteTo" :funcType "extTyped" :retType "extTyped" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
-""" #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /FileParamVerWriteTo/ deco=icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)  [[elisp:(org-cycle)][| ]]
-#+end_org """
-@icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
-def FileParamVerWriteTo(
-####+END:
-        parRoot=None,
-        parName=None,
-        parVerTag=None,
-        parValue=None,
-):
-    """ #+begin_org
-** [[elisp:(org-cycle)][| *DocStr | ] Given ticmoBase, Create parName, then assign parValue to parVerTag
-    #+end_org """
-
-    parFullPath = os.path.join(parRoot, parName)
-    try: os.makedirs( parFullPath, 0o777 )
-    except OSError: pass
-
-    thisFileParam = FileParam(parName=parVerTag,
-                                    parValue=parValue,
-                                    )
-
-    if thisFileParam == None:
-        return icm.EH_critical_usageError('')
-
-    return thisFileParam.writeTo(storeBase=parFullPath)
-
 ####+BEGIN: bx:icm:py3:func :funcName "FileParamVerReadFrom" :funcType "extTyped" :retType "extTyped" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /FileParamVerReadFrom/ deco=icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)  [[elisp:(org-cycle)][| ]]
@@ -886,20 +889,26 @@ def FileParamVerReadFrom(
     #print(filePar.parValueGet())
     return filePar
 
+####+BEGIN: bx:icm:py3:section :title "FILE_paramDict Functional Interface"
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  /Section/    [[elisp:(outline-show-subtree+toggle)][||]] *FILE_paramDict Functional Interface*  [[elisp:(org-cycle)][| ]]
+#+end_org """
+####+END:
 
-
-"""
-*  [[elisp:(org-cycle)][| ]]  /FILE_paramDictRead/ :: *FILE_paramDictRead:* (CMND) [[elisp:(org-cycle)][| ]]
-"""
-
-"""
-*  [[elisp:(org-cycle)][| ]]  [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(beginning-of-buffer)][Top]] [[elisp:(delete-other-windows)][(1)]] || Func             ::  FILE_paramDictRead    [[elisp:(org-cycle)][| ]]
-"""
+####+BEGIN: bx:icm:py3:func :funcName "FILE_paramDictRead" :comment "OLD Style CMND" :funcType "extTyped" :retType "extTyped" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /FILE_paramDictRead/ =OLD Style CMND= deco=icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)  [[elisp:(org-cycle)][| ]]
+#+end_org """
 @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
-def FILE_paramDictRead(interactive=icm.Interactivity.Both,
-                      inPathList=None):
-    """ Old Style CMND
-    """
+def FILE_paramDictRead(
+####+END:
+        interactive=icm.Interactivity.Both,
+        inPathList=None
+):
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Old Style CMND
+    #+end_org """
+
     try: icm.callableEntryEnhancer(type='cmnd')
     except StopIteration:  return(icm.ReturnCode.ExtractionSuccess)
 
@@ -1043,10 +1052,18 @@ Usage Pattern:
 
     return True
 
-
-
-def FILE_paramDictPrint(fileParamDict):
-    """ Returns a Dictionary of paramName:FileParam.        """
+####+BEGIN: bx:icm:py3:func :funcName "FILE_paramDictPrint" :funcType "extTyped" :retType "extTyped" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /FILE_paramDictPrint/ deco=icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)  [[elisp:(org-cycle)][| ]]
+#+end_org """
+@icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+def FILE_paramDictPrint(
+####+END:
+        fileParamDict,
+):
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Returns a Dictionary of paramName:FileParam.
+    #+end_org """
     for parName, filePar  in fileParamDict.items():
         #print('parName=' + parName)
         if filePar == None:
@@ -1067,14 +1084,20 @@ def FILE_paramDictPrint(fileParamDict):
 
 
 
-"""
-*  [[elisp:(org-cycle)][| ]]  [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(beginning-of-buffer)][Top]] [[elisp:(delete-other-windows)][(1)]] || Func             ::  FILE_paramDictReadDeep    [[elisp:(org-cycle)][| ]]
-"""
+####+BEGIN: bx:icm:py3:func :funcName "FILE_paramDictReadDeep" :comment "OLD Style Cmnd" :funcType "extTyped" :retType "extTyped" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /FILE_paramDictReadDeep/ deco=icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)  [[elisp:(org-cycle)][| ]]
+#+end_org """
 @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
-def FILE_paramDictReadDeep(interactive=icm.Interactivity.Both,
-                      inPathList=None):
-    """
-    """
+def FILE_paramDictReadDeep(
+####+END:
+        interactive=icm.Interactivity.Both,
+        inPathList=None
+):
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] OLD Style Cmnd --- NOTYET, to be revisited
+    #+end_org """
+
     try: icm.callableEntryEnhancer(type='cmnd')
     except StopIteration:  return(icm.ReturnCode.ExtractionSuccess)
 
@@ -1120,272 +1143,6 @@ def FILE_paramDictReadDeep(interactive=icm.Interactivity.Both,
 
     return fileParamsDict
 
-
-"""
-*  [[elisp:(org-cycle)][| ]]  [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(beginning-of-buffer)][Top]] [[elisp:(delete-other-windows)][(1)]] || Func             ::  FILE_parametersReadDeep_PlaceHolder    [[elisp:(org-cycle)][| ]]
-"""
-
-def FILE_parametersReadDeep_PlaceHolder(path=None):
-    """Read each file's content into a DEEP dictionary item with the filename as key.
-
-    Not Fully Implemeted YET.
-    """
-    retVal = None
-
-    absolutePath = os.path.abspath(path)
-
-    if not os.path.isdir(absolutePath):
-        return retVal
-
-    fileParamsDict = dict()
-
-    for root, dirs, files in os.walk(absolutePath):
-        # Each time that we see a dir we will create a new subDict
-        print(root)
-        print(dirs)
-        print(files)
-
-    return fileParamsDict
-
-
-####+BEGIN: bx:icm:python:section :title "ICM_Param: ICM Parameter (ICM_Param, ICM_ParamDict)"
-"""
-*  [[elisp:(beginning-of-buffer)][Top]] ############## [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(delete-other-windows)][(1)]]    *ICM_Param: ICM Parameter (ICM_Param, ICM_ParamDict)*  [[elisp:(org-cycle)][| ]]  [[elisp:(org-show-subtree)][|=]]
-"""
-####+END:
-
-ICM_ParamScope = ucf.enum('TargetParam', 'IcmGeneralParam', 'CmndSpecificParam')
-
-####+BEGIN: bx:dblock:python:class :className "ICM_Param" :superClass "" :comment "" :classType "basic"
-""" #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Cls-basic  [[elisp:(outline-show-subtree+toggle)][||]] /ICM_Param/ object  [[elisp:(org-cycle)][| ]]
-#+end_org """
-class ICM_Param(object):
-####+END:
-     """Representation of an Interactively Invokable Module Parameter (ICM_Param).
-
-     An ICM Parameter is a superset of an argsparse parameter which also includes:
-        - CMND relevance (Mandatory and Optional)
-        - Maping onto FileParams
-
-
-     ICM_Param is initially used to setup ArgParse and other user-interface parameter aspects.
-     """
-
-     def __init__(self,
-                  parName=None,
-                  parDescription=None,
-                  parDataType=None,
-                  parDefault=None,
-                  parChoices=None,
-                  parScope=None,
-                  parMetavar=None,
-                  parAction='store',                    # Same as argparse's action
-                  parNargs=None,                        # Same as argparse's nargs
-                  parCmndApplicability=None,             # List of CMNDs to which this ICM is applicable
-                  argparseShortOpt=None,
-                  argparseLongOpt=None,
-                 ):
-         '''Constructor'''
-         self.__parName = parName
-         self.__parValue = None
-         self.__parCmndApplicability = parCmndApplicability
-         self.__parDescription = parDescription
-         self.__parDataType = parDataType
-         self.__parDefault = parDefault
-         self.__parChoices = parChoices
-         self.__parMetavar = parMetavar
-         self.parActionSet(parAction)
-         self.parNargsSet(parNargs)
-         self.__argparseShortOpt =  argparseShortOpt
-         self.__argparseLongOpt =  argparseLongOpt
-
-     def __str__(self):
-         return  ("""\
-parName: {parName}
-value: {value}
-description: {description}""".
-                  format(
-                      parName=self.parNameGet(),
-                      value=self.parValueGet(),
-                      description=self.parDescriptionGet()
-                  )
-             )
-
-     def parNameGet(self):
-         """  """
-         return self.__parName
-
-     def parNameSet(self, parName):
-         """        """
-         self.__parName = parName
-
-     def parValueGet(self):
-         """        """
-         return self.__parValue
-
-     def parValueSet(self, value):
-         """        """
-         self.__parValue = value
-
-     def parDescriptionGet(self):
-         """        """
-         return self.__parDescription
-
-     def parDescriptionSet(self, parDescription):
-         """        """
-         self.__parDescription = parDescription
-
-     def parDataTypeGet(self):
-         """        """
-         return self.__parDataType
-
-     def parDataTypeSet(self, parDataType):
-         """        """
-         self.__parDataType = parDataType
-
-     def parDefaultGet(self):
-         """        """
-         return self.__parDefault
-
-     def parDefaultSet(self, parDefault):
-         """        """
-         self.__parDefault = parDefault
-
-     def parChoicesGet(self):
-         """        """
-         return self.__parChoices
-
-     def parChoicesSet(self, parChoices):
-         """        """
-         self.__parChoices = parChoices
-
-     def parActionGet(self):
-         """        """
-         return self.__parAction
-
-     def parActionSet(self, parAction):
-         """        """
-         self.__parAction = parAction
-
-     def parNargsGet(self):
-         """        """
-         return self.__parNargs
-
-     def parNargsSet(self, parNargs):
-         """        """
-         self.__parNargs = parNargs
-
-     def argsparseShortOptGet(self):
-         """        """
-         return self.__argparseShortOpt
-
-     def argsparseShortOptSet(self, argsparseShortOpt):
-         """        """
-         self.__argparseShortOpt = argsparseShortOpt
-
-     def argsparseLongOptGet(self):
-         """        """
-         return self.__argparseLongOpt
-
-     def argsparseLongOptSet(self, argsparseLongOpt):
-         """        """
-         self.__argparseLongOpt = argsparseLongOpt
-
-     def readFrom(self, parRoot=None, parName=None):
-         """Read into a FILE_param content of parBase/parName.
-
-         Returns a FILE_param which was contailed in parBase/parName.
-         """
-
-         absoluteParRoot = os.path.abspath(parRoot)
-
-         if not os.path.isdir(absoluteParRoot):
-             return None
-
-         absoluteParBase = os.path.join(absoluteParRoot, parName)
-
-         if not os.path.isdir(absoluteParBase):
-             return None
-
-         fileParam = self
-
-         self.__parName = parName
-
-         #
-         # Now we will fill fileParam based on the directory content
-         #
-         for item in os.listdir(absoluteParBase):
-             fileFullPath = os.path.join(absoluteParBase, item)
-             if os.path.isfile(fileFullPath):
-
-                 if item == 'value':
-                     lineString = open(fileFullPath, 'r').read()
-                     self.parValueSet(lineString)
-                     continue
-
-                 # Rest of the files are expected to be attributes
-
-                 lineString = open(fileFullPath, 'r').read()
-                 # NOTYET, check for exceptions
-                 eval('self.attr' + str(item).title() + 'Set(lineString)')
-
-         return fileParam
-
-     @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
-     def writeAsFileParam(
-             self,
-             parRoot=None,
-     ):
-         """Writing a FILE_param content of self.
-
-         Returns a FILE_param which was contailed in parBase/parName.
-         """
-
-         absoluteParRoot = os.path.abspath(parRoot)
-
-         if not os.path.isdir(absoluteParRoot):
-            try: os.makedirs( absoluteParRoot, 0o775 )
-            except OSError: pass
-
-         #print absoluteParRoot
-
-         #print
-         #print self.parValueGet()
-
-         parValue = self.parValueGet()
-         if not parValue:
-             parValue = "unSet"
-
-         FileParamWriteTo(
-             parRoot=absoluteParRoot,
-             parName=self.parNameGet(),
-             parValue=parValue,
-         )
-
-         varValueFullPath = os.path.join(
-             absoluteParRoot,
-             self.parNameGet(),
-             'description'
-         )
-
-         bpf.fto.FV_writeToFilePathAndCreate(
-             filePath=varValueFullPath,
-             varValue=self.parDescriptionGet(),
-         )
-
-         varValueBaseDir = os.path.join(
-             absoluteParRoot,
-             self.parNameGet(),
-             'enums'
-         )
-
-         for thisChoice in self.parChoicesGet():
-             bpf.fto.FV_writeToBaseDirAndCreate(
-                 baseDir=varValueBaseDir,
-                 varName=thisChoice,
-                 varValue="",
-             )
 
 ####+BEGIN: bx:icm:py3:func :funcName "readTreeAtBaseDir_wOp" :funcType "wOp" :retType "OpOutcome" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
 """ #+begin_org
@@ -1468,16 +1225,11 @@ def parsGetAsDictValue_wOp(
     )
 
 
-####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :sep nil :title "CmndSvcs" :anchor ""  :extraInfo "Command Services Section"
+####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :sep nil :title "CmndSvcs" :anchor ""  :extraInfo "File Parameters Get/Set -- Commands"
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*     [[elisp:(outline-show-subtree+toggle)][| _CmndSvcs_: |]]  Command Services Section  [[elisp:(org-shifttab)][<)]] E|
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*     [[elisp:(outline-show-subtree+toggle)][| _CmndSvcs_: |]]  File Parameters Get/Set -- Commands  [[elisp:(org-shifttab)][<)]] E|
 #+end_org """
 ####+END:
-
-
-"""
-*  [[elisp:(beginning-of-buffer)][Top]] ################ [[elisp:(delete-other-windows)][(1)]]      *File Parameters Get/Set -- Commands*
-"""
 
 ####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "fpParamsList" :parsMand "fpBase cls" :parsOpt "" :argsMin "0" :argsMax "3" :asFunc "" :interactiveP ""
 """ #+begin_org
@@ -1839,12 +1591,10 @@ class fpParamsSetDefaults(icm.Cmnd):
 ***** [[elisp:(org-cycle)][| *CmndDesc:* | ]]  Returns the full path of the Sr baseDir.
 """
 
-
-
-####+BEGINNOT: bx:icm:python:cmnd:classHead :cmndName "fpParamsRead" :parsMand "fpBase cls" :parsOpt "" :argsMin "0" :argsMax "999" :asFunc "" :interactiveP ""
-"""
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  ICM-Cmnd   :: /fpParamsRead/ parsMand=fpBase cls parsOpt= argsMin=0 argsMax=999 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
-"""
+####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "fpParamsRead" :parsMand "fpBase cls" :parsOpt "" :argsMin "0" :argsMax "999" :asFunc "" :interactiveP ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc    [[elisp:(outline-show-subtree+toggle)][||]] <<fpParamsRead>> parsMand=fpBase cls parsOpt= argsMin=0 argsMax=999 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+#+end_org """
 class fpParamsRead(icm.Cmnd):
     cmndParamsMandatory = [ 'fpBase', 'cls', ]
     cmndParamsOptional = [ ]
@@ -1856,7 +1606,7 @@ class fpParamsRead(icm.Cmnd):
         fpBase=None,         # or Cmnd-Input
         cls=None,         # or Cmnd-Input
         argsList=[],         # or Args-Input
-    ):
+    ) -> icm.OpOutcome:
         cmndOutcome = self.getOpOutcome()
         if interactive:
             if not self.cmndLineValidate(outcome=cmndOutcome):
@@ -1871,7 +1621,7 @@ class fpParamsRead(icm.Cmnd):
         fpBase = callParamsDict['fpBase']
         cls = callParamsDict['cls']
 
-        cmndArgsSpecDict = self.cmndArgsSpec(fpBase, cls,)
+        cmndArgsSpecDict = self.cmndArgsSpec()
         if not self.cmndArgsValidate(effectiveArgsList, cmndArgsSpecDict, outcome=cmndOutcome):
             return cmndOutcome
 ####+END:
@@ -1957,30 +1707,22 @@ class fpParamsRead(icm.Cmnd):
 
         return cmndArgsSpecDict
 
-####+BEGIN: bx:icm:python:method :methodName "cmndDocStr" :methodType "anyOrNone" :retType "bool" :deco "default" :argsList ""
-    """
-**  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Method-anyOrNone :: /cmndDocStr/ retType=bool argsList=nil deco=default  [[elisp:(org-cycle)][| ]]
-#+end_org """
-    @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
-    def cmndDocStr(self):
-####+END:
-        return """
-***** [[elisp:(org-cycle)][| *CmndDesc:* | ]]  Returns the full path of the Sr baseDir.
-"""
 
-
-####+BEGIN: bx:icm:python:func :funcName "FP_readTreeAtBaseDir_CmndOutput" :funcType "anyOrNone" :retType "bool" :deco "" :argsList "interactive fpBaseDir cmndOutcome"
+####+BEGIN: bx:icm:py3:func :funcName "FP_readTreeAtBaseDir_CmndOutput" :funcType "extTyped" :retType "extTyped" :deco "icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)" :argsList ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-anyOrNone [[elisp:(outline-show-subtree+toggle)][||]] /FP_readTreeAtBaseDir_CmndOutput/ retType=bool argsList=(interactive fpBaseDir cmndOutcome)  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-extTyped [[elisp:(outline-show-subtree+toggle)][||]] /FP_readTreeAtBaseDir_CmndOutput/ deco=icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)  [[elisp:(org-cycle)][| ]]
 #+end_org """
+@icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
 def FP_readTreeAtBaseDir_CmndOutput(
+####+END:
     interactive,
     fpBaseDir,
     cmndOutcome,
 ):
-####+END:
-    """Invokes FP_readTreeAtBaseDir.cmnd as interactive-output only."""
-    #
+    """ #+begin_org
+** [[elisp:(org-cycle)][| *DocStr | ] Invokes FP_readTreeAtBaseDir.cmnd as interactive-output only.
+    #+end_org """
+
     # Interactive-Output + Chained-Outcome Command Invokation
     #
     FP_readTreeAtBaseDir = icm.FP_readTreeAtBaseDir()
