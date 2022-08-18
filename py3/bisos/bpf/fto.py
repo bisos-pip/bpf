@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """ #+begin_org
-* *[Summary]* :: A =CmndSvc= for
+* *[Summary]* :: A =PyLib= formanipulation of File Tree Objects (FTO). (bisos.bpf.fto).
 #+end_org """
 
 ####+BEGIN: b:prog:file/proclamations :outLevel 1
@@ -35,8 +35,13 @@ icmInfo['cmndParts'] = 'IcmCmndParts[common] IcmCmndParts[param]'
 ####+END:
 
 """ #+begin_org
-* /[[elisp:(org-cycle)][| Description |]]/ :: [[file:/bisos/git/auth/bxRepos/blee-binders/bisos-core/COMEEGA/_nodeBase_/fullUsagePanel-en.org][BISOS COMEEGA Panel]]
-Module description comes here.
+* /[[elisp:(org-cycle)][| Description |]]/ :: [[file:/bisos/panels/bisos-model/fileTreeObject-FTO/fullUsagePanel-en.org][BPF File Tree Objcets (fto.) Panel]]
+/FILE_TreeObject/    :: *FILE_TreeObject: A Tree of Nodes and Leaves on Top Of file system*
+Facilitates building Tree hierarchies on the file system.
+Super Class for FILE_Param and ICM_Param
+
+See panel for overview and details.
+
 ** Relevant Panels:
 ** Status: In use with blee3
 ** /[[elisp:(org-cycle)][| Planned Improvements |]]/ :
@@ -80,11 +85,6 @@ from bisos import bpf
 import os
 import enum
 
-"""
-*  [[elisp:(org-cycle)][| ]]  /FILE_TreeObject/    :: *FILE_TreeObject: A Tree of Nodes and Leaves on Top Of file system* [[elisp:(org-cycle)][| ]]
-**  [[elisp:(org-cycle)][| ]]  Subject      :: Facilitates building Tree hierarchies on the file system. [[elisp:(org-cycle)][| ]]
-**  [[elisp:(org-cycle)][| ]]  Subject      :: Super Class for FILE_Param and ICM_Param [[elisp:(org-cycle)][| ]]
-"""
 
 ####+BEGIN: bx:dblock:python:class :className "FileTreeItem" :superClass "enum.Enum" :comment "" :classType "basic"
 """ #+begin_org
