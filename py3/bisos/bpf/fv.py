@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """ #+begin_org
-* *[Summary]* :: A =PyLib= for manipulation of File Variables.
+* *[Summary]* :: A =PyLib= for manipulation of File Variables (FV). (bisos.bpf.fv).
 #+end_org """
 
 ####+BEGIN: b:prog:file/proclamations :outLevel 1
