@@ -83,9 +83,9 @@ icmInfo['cmndParts'] = "IcmCmndParts[common] IcmCmndParts[param]"
 ####+END:
 
 ####+BEGIN: bx:icm:python:icmItem :itemType "=Imports=" :itemTitle "*IMPORTS*"
-"""
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  =Imports=  :: *IMPORTS*  [[elisp:(org-cycle)][| ]]
-"""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  =Imports=  [[elisp:(outline-show-subtree+toggle)][||]] *IMPORTS*  [[elisp:(org-cycle)][| ]]
+#+end_org """
 ####+END:
 
 import sys
@@ -122,9 +122,9 @@ class TransitionError(Error):
         self.message = message
 
 ####+BEGIN: bx:icm:py3:func :funcName "terminate" :funcType "" :retType "" :deco "" :argsList "" :comment "Instantiate specified class just once based on args."
-"""
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Func-      :: /terminate/ =Instantiate specified class just once based on args.=  [[elisp:(org-cycle)][| ]]
-"""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-         [[elisp:(outline-show-subtree+toggle)][||]] /terminate/ =Instantiate specified class just once based on args.=  [[elisp:(org-cycle)][| ]]
+#+end_org """
 def terminate(
 ####+END:
         prev,

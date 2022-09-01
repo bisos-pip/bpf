@@ -57,9 +57,9 @@ Module description comes here.
 ####+END:
 
 
-####+BEGIN: bx:icm:py3:func :funcName "orgMode" :funcType "" :retType "" :deco "" :argsList "commentStr" :comment "Include orgMode in code as comments."
+####+BEGIN: bx:cs:py3:func :funcName "orgMode" :funcType "" :retType "" :deco "" :argsList "commentStr" :comment "Include orgMode in code as comments."
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  Func-      [[elisp:(outline-show-subtree+toggle)][||]] /orgMode/ =Include orgMode in code as comments.=  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  F-         [[elisp:(outline-show-subtree+toggle)][||]] /orgMode/ =Include orgMode in code as comments.=  [[elisp:(org-cycle)][| ]]
 #+end_org """
 def orgMode(
 ####+END:
