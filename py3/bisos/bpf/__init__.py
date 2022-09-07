@@ -27,10 +27,12 @@ from .fv import  (writeToFilePath, writeToFilePathAndCreate, writeToBaseDirAndCr
 
 from .fto import  (FileTreeItem, FILE_TreeObject)
 
-from .fp import  (BaseDir, FileParam, FileParamWriteTo, FileParamWriteToPath, FileParamWriteToFromFile,
-                  FileParamReadFrom, FileParamValueReadFrom, FileParamReadFromPath, FileParamValueReadFromPath,
-                  FileParamVerWriteTo, FileParamVerReadFrom, FileParamDict, FILE_paramDictRead,
-                  FP_readTreeAtBaseDir, FILE_paramDictReadDeep)
+from .fp import  (__doc__,)
+
+# from .fp import  (BaseDir, FileParam, FileParamWriteTo, FileParamWriteToPath, FileParamWriteToFromFile,
+#                   FileParamReadFrom, FileParamValueReadFrom, FileParamReadFromPath, FileParamValueReadFromPath,
+#                   FileParamVerWriteTo, FileParamVerReadFrom, FileParamDict, FILE_paramDictRead,
+#                   FP_readTreeAtBaseDir, FILE_paramDictReadDeep)
 
 # from .fp import  (BaseDir, FileParam, FileParamWriteTo, FileParamWriteToPath, FileParamWriteToFromFile,
 #                   FileParamReadFrom, FileParamValueReadFrom, FileParamReadFromPath, FileParamValueReadFromPath,

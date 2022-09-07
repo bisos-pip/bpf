@@ -37,7 +37,7 @@ csInfo['moduleName'] = "csExamples"
 ####+END:
 
 ####+BEGIN: bx:cs:py:version-timestamp :style "date"
-csInfo['version'] = "202208311508"
+csInfo['version'] = "202209052608"
 ####+END:
 
 ####+BEGIN: bx:cs:py:status :status "Production"
@@ -60,7 +60,7 @@ csInfo['groupingType'] = "IcmGroupingType-pkged"
 csInfo['cmndParts'] = "IcmCmndParts[common] IcmCmndParts[param]"
 
 
-####+BEGIN: bx:icm:python:top-of-file :partof "bystar" :copyleft "halaal+minimal"
+####+BEGIN: bx:cs:python:top-of-file :partof "bystar" :copyleft "halaal+minimal"
 """ #+begin_org
 *  This file:/bisos/git/auth/bxRepos/bisos-pip/bpf/py3/bin/csExamples.cs :: [[elisp:(org-cycle)][| ]]
  is part of The Libre-Halaal ByStar Digital Ecosystem. http://www.by-star.net
@@ -71,7 +71,7 @@ csInfo['cmndParts'] = "IcmCmndParts[common] IcmCmndParts[param]"
 #+end_org """
 ####+END:
 
-####+BEGIN: bx:icm:python:topControls :partof "bystar" :copyleft "halaal+minimal"
+####+BEGIN: bx:cs:python:topControls :partof "bystar" :copyleft "halaal+minimal"
 """ #+begin_org
 *  [[elisp:(org-cycle)][|/Controls/| ]] :: [[elisp:(org-show-subtree)][|=]]  [[elisp:(show-all)][Show-All]]  [[elisp:(org-shifttab)][Overview]]  [[elisp:(progn (org-shifttab) (org-content))][Content]] | [[file:Panel.org][Panel]] | [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] | [[elisp:(bx:org:run-me)][Run]] | [[elisp:(bx:org:run-me-eml)][RunEml]] | [[elisp:(delete-other-windows)][(1)]] | [[elisp:(progn (save-buffer) (kill-buffer))][S&Q]]  [[elisp:(save-buffer)][Save]]  [[elisp:(kill-buffer)][Quit]] [[elisp:(org-cycle)][| ]]
 ** /Version Control/ ::  [[elisp:(call-interactively (quote cvs-update))][cvs-update]]  [[elisp:(vc-update)][vc-update]] | [[elisp:(bx:org:agenda:this-file-otherWin)][Agenda-List]]  [[elisp:(bx:org:todo:this-file-otherWin)][ToDo-List]]
@@ -83,7 +83,7 @@ csInfo['cmndParts'] = "IcmCmndParts[common] IcmCmndParts[param]"
 """
 ####+END:
 
-####+BEGIN: bx:icm:python:icmItem :itemType "=Imports=" :itemTitle "*IMPORTS*"
+####+BEGIN: bx:cs:python:icmItem :itemType "=Imports=" :itemTitle "*IMPORTS*"
 """ #+begin_org
 *  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  =Imports=  [[elisp:(outline-show-subtree+toggle)][||]] *IMPORTS*  [[elisp:(org-cycle)][| ]]
 #+end_org """
@@ -147,16 +147,15 @@ csuList = [ 'blee.icmPlayer.bleep', 'bisos.examples.pattern_csu', 'bisos.example
 g_importedCmndsModules = cs.csuList_importedModules(csuList)
 
 def g_extraParams():
-    csParams = cs.param.ICM_ParamDict()
-    cs.csuList_commonParamsSpecify(csParams, csuList)
+    csParams = cs.param.CmndParamDict()
+    cs.csuList_commonParamsSpecify(csuList, csParams)
     cs.argsparseBasedOnCsParams(csParams)
 
 ####+END:
 
-
-####+BEGIN: bx:cs:py3:cmnd:classHead :cmndName "examples" :cmndType "ICM-Cmnd-FWrk"  :comment "FrameWrk: ICM Examples" :parsMand "" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+####+BEGINNOT: b:py3:cs:cmnd/classHead :cmndName "examples" :comment "FrameWrk: ICM Examples" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  ICM-Cmnd-FWrk [[elisp:(outline-show-subtree+toggle)][||]] <<examples>> =FrameWrk: ICM Examples= parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc    [[elisp:(outline-show-subtree+toggle)][||]] <<example>> =FrameWrk: ICM Examples= parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
 #+end_org """
 class examples(cs.Cmnd):
     cmndParamsMandatory = [ ]
@@ -165,18 +164,80 @@ class examples(cs.Cmnd):
 
     @io.track.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
     def cmnd(self,
-        interactive=False,        # Can also be called non-interactively
+             rtInv: cs.RtInvoker,
+             cmndOutcome: bpf.op.Outcome,
     ) -> bpf.op.Outcome:
         cmndOutcome = self.getOpOutcome()
-        if interactive:
+        if rtInv.outs:
             if not self.cmndLineValidate(outcome=cmndOutcome):
                 return cmndOutcome
 
         callParamsDict = {}
-        if not cs.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
+        if not cs.cmndCallParamsValidate(callParamsDict, rtInv, outcome=cmndOutcome):
             return cmndOutcome
 
         """FrameWrk: ICM Examples"""
+####+END:
+        def cpsInit(): return collections.OrderedDict()
+        def menuItem(verbosity): cs.examples.cmndInsert(cmndName, cps, cmndArgs, verbosity=verbosity) # 'little' or 'none'
+        #def execLineEx(cmndStr): cs.examples.execInsert(execLine=cmndStr)
+
+        #logControler = io.log.Control()
+        #logControler.loggerSetLevel(20)
+
+        cs.examples.myName(cs.G.icmMyName(), cs.G.icmMyFullName())
+
+        cs.examples.commonBrief()
+
+        bleep.examples_icmBasic()
+
+        cs.examples.menuChapter('=Misc=  *Facilities*')
+
+        cmndName = "dirCreateExamples" ; cmndArgs = "" ;
+        cps=cpsInit() ;
+        menuItem(verbosity='little')
+
+        cmndName = "exceptionExamples" ; menuItem(verbosity='little')
+
+        cmndName = "subProcOpsExamples" ; menuItem(verbosity='little')
+
+        pattern_csu.examples_csu(sectionTitle="default")
+
+        pyRunAs_csu.examples_csu(sectionTitle="default")
+
+        io_csu.examples_csu(sectionTitle="default")
+
+        parsArgsStdinCmndResult_csu.examples_csu(sectionTitle="default")
+
+        subProcOps_csu.examples_csu(sectionTitle="default")
+
+        platformConfigs_csu.examples_csu(sectionTitle="default")
+
+        cs.examples.menuChapter('=Tests=  *All Examples As Tests*')
+        cmndName = "allExamplesAsTests" ; menuItem(verbosity='none')
+
+        return(cmndOutcome)
+
+
+
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "examplesOld" :comment "FrameWrk: ICM Examples" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<examplesOld>> =FrameWrk: ICM Examples=parsMand= parsOpt= argsMin=0 argsMax=0 pyInv=
+#+end_org """
+class examplesOld(cs.Cmnd):
+    cmndParamsMandatory = [ ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 0, 'Max': 0,}
+
+    @io.track.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+             rtInv: cs.RtInvoker,
+             cmndOutcome: bpf.op.Outcome,
+    ) -> bpf.op.Outcome:
+        """FrameWrk: ICM Examples"""
+        callParamsDict = {}
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
+            return io.eh.badOutcome(cmndOutcome)
 ####+END:
         def cpsInit(): return collections.OrderedDict()
         def menuItem(verbosity): cs.examples.cmndInsert(cmndName, cps, cmndArgs, verbosity=verbosity) # 'little' or 'none'
@@ -220,9 +281,9 @@ class examples(cs.Cmnd):
         return(cmndOutcome)
 
 
-####+BEGIN: bx:cs:py3:cmnd:classHead :cmndName "dirCreateExamples" :comment "" :parsMand "" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "dirCreateExamples" :comment "" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc    [[elisp:(outline-show-subtree+toggle)][||]] <<dirCreateExamples>> parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<dirCreateExamples>>parsMand= parsOpt= argsMin=0 argsMax=0 pyInv=
 #+end_org """
 class dirCreateExamples(cs.Cmnd):
     cmndParamsMandatory = [ ]
@@ -231,17 +292,13 @@ class dirCreateExamples(cs.Cmnd):
 
     @io.track.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
     def cmnd(self,
-        interactive=False,        # Can also be called non-interactively
+             rtInv: cs.RtInvoker,
+             cmndOutcome: bpf.op.Outcome,
     ) -> bpf.op.Outcome:
-        cmndOutcome = self.getOpOutcome()
-        if interactive:
-            if not self.cmndLineValidate(outcome=cmndOutcome):
-                return cmndOutcome
 
         callParamsDict = {}
-        if not cs.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
-            return cmndOutcome
-
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
+            return io.eh.badOutcome(cmndOutcome)
 ####+END:
         docStr = """
 ***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Various examples for creation of directories.
@@ -255,9 +312,9 @@ class dirCreateExamples(cs.Cmnd):
 
 
 
-####+BEGIN: bx:cs:py3:cmnd:classHead :cmndName "exceptionExamples" :comment "" :parsMand "" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "exceptionExamples" :comment "" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc    [[elisp:(outline-show-subtree+toggle)][||]] <<exceptionExamples>> parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<exceptionExamples>>parsMand= parsOpt= argsMin=0 argsMax=0 pyInv=
 #+end_org """
 class exceptionExamples(cs.Cmnd):
     cmndParamsMandatory = [ ]
@@ -266,17 +323,13 @@ class exceptionExamples(cs.Cmnd):
 
     @io.track.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
     def cmnd(self,
-        interactive=False,        # Can also be called non-interactively
+             rtInv: cs.RtInvoker,
+             cmndOutcome: bpf.op.Outcome,
     ) -> bpf.op.Outcome:
-        cmndOutcome = self.getOpOutcome()
-        if interactive:
-            if not self.cmndLineValidate(outcome=cmndOutcome):
-                return cmndOutcome
 
         callParamsDict = {}
-        if not cs.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
-            return cmndOutcome
-
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
+            return io.eh.badOutcome(cmndOutcome)
 ####+END:
 
         bpf.exception.terminate("PREV-Term", "NEXT-Term", "Some Termination Message")
@@ -293,9 +346,9 @@ class exceptionExamples(cs.Cmnd):
 
 
 
-####+BEGIN: bx:cs:py3:cmnd:classHead :cmndName "allExamplesAsTests" :comment "" :parsMand "" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+####+BEGIN: b:py3:cs:cmnd/classHead :cmndName "allExamplesAsTests" :comment "" :parsMand "" :parsOpt "" :argsMin 0 :argsMax 0 :pyInv ""
 """ #+begin_org
-*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc    [[elisp:(outline-show-subtree+toggle)][||]] <<allExamplesAsTests>> parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CmndSvc-   [[elisp:(outline-show-subtree+toggle)][||]] <<allExamplesAsTests>>parsMand= parsOpt= argsMin=0 argsMax=0 pyInv=
 #+end_org """
 class allExamplesAsTests(cs.Cmnd):
     cmndParamsMandatory = [ ]
@@ -304,17 +357,13 @@ class allExamplesAsTests(cs.Cmnd):
 
     @io.track.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
     def cmnd(self,
-        interactive=False,        # Can also be called non-interactively
+             rtInv: cs.RtInvoker,
+             cmndOutcome: bpf.op.Outcome,
     ) -> bpf.op.Outcome:
-        cmndOutcome = self.getOpOutcome()
-        if interactive:
-            if not self.cmndLineValidate(outcome=cmndOutcome):
-                return cmndOutcome
 
         callParamsDict = {}
-        if not cs.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
-            return cmndOutcome
-
+        if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
+            return io.eh.badOutcome(cmndOutcome)
 ####+END:
         self.cmndDocStr(f""" #+begin_org \
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] This is an example of a CmndSvc with lots of features.
@@ -341,32 +390,46 @@ class allExamplesAsTests(cs.Cmnd):
         # ).isProblematic():  return(io.eh.badOutcome(cmndOutcome))
 
         if bpf.subProc.WOpW(invedBy=self, log=1).bash(
+                f"""{myName}  {verbosity} --par1Example="par1Mantory" --par2Example="par2Optional" -i parsArgsStdinCmndResult""",
+        ).isProblematic():  return(io.eh.badOutcome(cmndOutcome))
+
+        if bpf.subProc.WOpW(invedBy=self, log=1).bash(
                 f"""{myName}  {verbosity} -i pyCmndInvOf_parsArgsStdinCmndResult""",
         ).isProblematic():  return(io.eh.badOutcome(cmndOutcome))
 
         return cmndOutcome
 
 
-####+BEGINNOT: bx:icm:python:section :title "= =Framework::=   __main__ g_csMain ="
-"""
-*  [[elisp:(beginning-of-buffer)][Top]] ############## [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(delete-other-windows)][(1)]]    *= =Framework::=   __main__ g_icmMain =*  [[elisp:(org-cycle)][| ]]  [[elisp:(org-show-subtree)][|=]]
-"""
-####+END:
+####+BEGIN: b:py3:cs:framework/main :csInfo "csInfo" :noCmndEntry "examples" :extraParamsHook "g_extraParams" :importedCmndsModules "g_importedCmndsModules"
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*  CsFrmWrk   [[elisp:(outline-show-subtree+toggle)][||]] ~g_icmMain~ (csInfo, _examples_, g_extraParams, g_importedCmndsModules)
+#+end_org """
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     cs.main.g_csMain(
         csInfo=csInfo,
-        noCmndEntry=examples, # noCmndEntry=mainEntry,
+        noCmndEntry=examples,  # specify a Cmnd name
         extraParamsHook=g_extraParams,
         importedCmndsModules=g_importedCmndsModules,
     )
 
-####+BEGIN: bx:icm:python:section :title "End Of Editable Text"
-"""
-*  [[elisp:(beginning-of-buffer)][Top]] ############## [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] [[elisp:(delete-other-windows)][(1)]]    *End Of Editable Text*  [[elisp:(org-cycle)][| ]]  [[elisp:(org-show-subtree)][|=]]
-"""
+####+END:
+
+####+BEGIN: blee:bxPanel:foldingSection :outLevel 0 :title " ~End Of Editable Text~ "
+""" #+begin_org
+*  _[[elisp:(blee:menu-sel:outline:popupMenu)][±]]_ _[[elisp:(blee:menu-sel:navigation:popupMenu)][Ξ]]_ [[elisp:(outline-show-branches+toggle)][|=]] [[elisp:(bx:orgm:indirectBufOther)][|>]] *[[elisp:(blee:ppmm:org-mode-toggle)][|N]]*     [[elisp:(outline-show-subtree+toggle)][| _ ~End Of Editable Text~ _: |]]    [[elisp:(org-shifttab)][<)]] E|
+#+end_org """
 ####+END:
 
 ####+BEGIN: bx:dblock:global:file-insert-cond :cond "./blee.el" :file "/bisos/apps/defaults/software/plusOrg/dblock/inserts/endOfFileControls.org"
 #+STARTUP: showall
+####+END:
+
+####+BEGIN: b:prog:file/endOfFile :extraParams nil
+""" #+begin_org
+* *[[elisp:(org-cycle)][| END-OF-FILE |]]* :: emacs and org variables and control parameters
+#+end_org """
+### local variables:
+### no-byte-compile: t
+### end:
 ####+END:
