@@ -10,7 +10,7 @@
 * [[elisp:(org-cycle)][| /Control Parameters Of This File/ |]] :: dblk ctrls classifications=cs-mu
 #+BEGIN_SRC emacs-lisp
 (setq-local b:dblockControls t) ; (setq-local b:dblockControls nil)
-(put 'b:dblockControls 'py3:cs:Classification "cs-mu") ; Main Multi-Unit CommandSvc
+(put 'b:dblockControls 'py3:cs:Classification "cs-mu") ; one of cs-mu, cs-u, cs-lib, bpf-lib, pyLibPure
 #+END_SRC
 #+RESULTS:
 : cs-mu
@@ -29,7 +29,7 @@
 ####+BEGIN: b:prog:file/particulars :authors ("./inserts/authors-mb.org")
 """ #+begin_org
 * *[[elisp:(org-cycle)][| Particulars |]]* :: Authors, version
-** This File: /bisos/git/auth/bxRepos/bisos-pip/bpf/py3/bin/csExamples.cs
+** This File: /bisos/core/bpip/examples/csExamples.cs
 ** Authors: Mohsen BANAN, http://mohsen.banan.1.byname.net/contact
 #+end_org """
 ####+END:
@@ -40,7 +40,7 @@
 #+end_org """
 import typing
 csInfo: typing.Dict[str, typing.Any] = { 'moduleName': ['csExamples'], }
-csInfo['version'] = '202209225748'
+csInfo['version'] = '202402103709'
 csInfo['status']  = 'inUse'
 csInfo['panel'] = 'csExamples-Panel.org'
 csInfo['groupingType'] = 'IcmGroupingType-pkged'
@@ -62,8 +62,9 @@ It works closely with the bisos.examples package.
 
 ####+BEGIN: b:prog:file/orgTopControls :outLevel 1
 """ #+begin_org
-* [[elisp:(org-cycle)][| Controls |]] :: [[elisp:(delete-other-windows)][(1)]] | [[elisp:(show-all)][Show-All]]  [[elisp:(org-shifttab)][Overview]]  [[elisp:(progn (org-shifttab) (org-content))][Content]] | [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] | [[elisp:(bx:org:run-me)][Run]] | [[elisp:(bx:org:run-me-eml)][RunEml]] | [[elisp:(progn (save-buffer) (kill-buffer))][S&Q]]  [[elisp:(save-buffer)][Save]]  [[elisp:(kill-buffer)][Quit]] [[elisp:(org-cycle)][| ]]
+* [[elisp:(org-cycle)][| Controls |]] :: [[elisp:(delete-other-windows)][(1)]] | [[elisp:(show-all)][Show-All]]  [[elisp:(org-shifttab)][Overview]]  [[elisp:(progn (org-shifttab) (org-content))][Content]] | [[file:Panel.org][Panel]] | [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] | [[elisp:(bx:org:run-me)][Run]] | [[elisp:(bx:org:run-me-eml)][RunEml]] | [[elisp:(progn (save-buffer) (kill-buffer))][S&Q]]  [[elisp:(save-buffer)][Save]]  [[elisp:(kill-buffer)][Quit]] [[elisp:(org-cycle)][| ]]
 ** /Version Control/ ::  [[elisp:(call-interactively (quote cvs-update))][cvs-update]]  [[elisp:(vc-update)][vc-update]] | [[elisp:(bx:org:agenda:this-file-otherWin)][Agenda-List]]  [[elisp:(bx:org:todo:this-file-otherWin)][ToDo-List]]
+
 #+end_org """
 ####+END:
 
@@ -86,6 +87,7 @@ It works closely with the bisos.examples package.
 from bisos import b
 from bisos.b import cs
 from bisos.b import b_io
+from bisos.common import csParam
 
 import collections
 ####+END:
@@ -171,9 +173,10 @@ class examples(cs.Cmnd):
              cmndOutcome: b.op.Outcome,
     ) -> b.op.Outcome:
         """FrameWrk: CS-Main-Examples"""
+        failed = b_io.eh.badOutcome
         callParamsDict = {}
         if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
-            return b_io.eh.badOutcome(cmndOutcome)
+            return failed(cmndOutcome)
 ####+END:
         def cpsInit(): return collections.OrderedDict()
         def menuItem(verbosity): cs.examples.cmndInsert(cmndName, cps, cmndArgs, verbosity=verbosity) # 'little' or 'none'
@@ -240,9 +243,10 @@ class dirCreateExamples(cs.Cmnd):
              cmndOutcome: b.op.Outcome,
     ) -> b.op.Outcome:
 
+        failed = b_io.eh.badOutcome
         callParamsDict = {}
         if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
-            return b_io.eh.badOutcome(cmndOutcome)
+            return failed(cmndOutcome)
 ####+END:
         docStr = """
 ***** [[elisp:(org-cycle)][| *CmndDesc:* | ]] Various examples for creation of directories.
@@ -271,9 +275,10 @@ class exceptionExamples(cs.Cmnd):
              cmndOutcome: b.op.Outcome,
     ) -> b.op.Outcome:
 
+        failed = b_io.eh.badOutcome
         callParamsDict = {}
         if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
-            return b_io.eh.badOutcome(cmndOutcome)
+            return failed(cmndOutcome)
 ####+END:
 
         b.exception.terminate("PREV-Term", "NEXT-Term", "Some Termination Message")
@@ -305,9 +310,10 @@ class allExamplesAsTests(cs.Cmnd):
              cmndOutcome: b.op.Outcome,
     ) -> b.op.Outcome:
 
+        failed = b_io.eh.badOutcome
         callParamsDict = {}
         if self.invocationValidate(rtInv, cmndOutcome, callParamsDict, None).isProblematic():
-            return b_io.eh.badOutcome(cmndOutcome)
+            return failed(cmndOutcome)
 ####+END:
         self.cmndDocStr(f""" #+begin_org \
 ** [[elisp:(org-cycle)][| *CmndDesc:* | ]] This is an example of a CmndSvc with lots of features.
